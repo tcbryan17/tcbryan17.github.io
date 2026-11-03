@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Projects Portfolio</title>
+  <meta name="description" content="Applied AI portfolio: retrieval-augmented generation, agent orchestration, and open-source model deployment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" id="brand"></a>
+      <nav>
+        <a href="#projects">Projects</a>
+        <a href="#how">How it's built</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <p class="eyebrow">Applied AI · Portfolio</p>
+      <h1 id="hero-name"></h1>
+      <p class="lede" id="hero-tagline"></p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#projects">See the projects</a>
+        <a class="btn" id="hero-github" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <ul class="hero-strip" id="hero-strip"></ul>
+    </section>
+
+    <section id="projects" class="wrap">
+      <h2 class="section-title">Projects</h2>
+      <div id="project-list"></div>
+    </section>
+
+    <section id="how" class="wrap">
+      <h2 class="section-title">How it's built</h2>
+      <div class="how-grid">
+        <div class="how-card">
+          <h3>One site, three independent projects</h3>
+          <p>This page is static and hosted on GitHub Pages. Each project lives in its own folder with its own backend, deployed separately, so one can change without breaking the others.</p>
+        </div>
+        <div class="how-card">
+          <h3>Replays always work</h3>
+          <p>Every project ships a recorded run, so you can see it work even when a live backend is asleep. Live demos go through a rate-limited proxy, and no API keys ever reach the browser.</p>
+        </div>
+        <div class="how-card">
+          <h3>Measured, not claimed</h3>
+          <p>Each project reports its numbers: retrieval accuracy, agent token cost, and serving latency and cost per token.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="wrap contact">
+      <h2 class="section-title">Let's talk</h2>
+      <p>Interested in a system like one of these for your team, or in working together?</p>
+      <div class="hero-actions" id="contact-links"></div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <span id="footer-name"></span> · <a id="footer-repo" target="_blank" rel="noopener">Source on GitHub</a>
+  </footer>
+
+  <dialog id="replay">
+    <div class="replay-head">
+      <strong id="replay-title"></strong>
+      <button class="icon-btn" id="replay-close" aria-label="Close">✕</button>
+    </div>
+    <ol class="replay-log" id="replay-log"></ol>
+    <div class="replay-foot">
+      <span class="muted">Recorded run · no backend needed</span>
+      <button class="btn small" id="replay-again">Replay</button>
+    </div>
+  </dialog>
+
+  <script src="projects.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
