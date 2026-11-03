@@ -2,11 +2,11 @@
 // Loaded as a classic script (not fetch/ES module) so index.html also works when opened via file://.
 
 window.PROFILE = {
-  name: "[Your Name]",
+  name: "Toby Bryan",
   tagline: "I design and ship applied AI systems — retrieval, agents, and model serving — end to end.",
   github: "https://github.com/tcbryan17",
-  linkedin: "https://www.linkedin.com/in/[your-handle]",
-  email: "[you@example.com]",
+  linkedin: "https://www.linkedin.com/in/toby-bryan/",
+  email: "tobycbryan@gmail.com",
   repo: "https://github.com/tcbryan17/tcbryan17.github.io",
 };
 
