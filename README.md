@@ -14,7 +14,7 @@ This repo is the website that brings together three independent applied-AI proje
 
 ```
             ┌──────────────────────────────────────────────┐
- visitor ─▶ │  tcbryan17.github.io   (this repo)            │
+ visitor ─▶ │  tcbryan17.github.io   (this repo)           │
             │  static site · cards from projects.js        │
             │  recorded replays — work with no backend     │
             └──────┬───────────────┬───────────────┬───────┘
