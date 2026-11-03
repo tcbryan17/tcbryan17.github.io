@@ -6,9 +6,9 @@ This repo is the website that brings together three independent applied-AI proje
 
 | # | Project | What it shows | Repo | Status |
 |---|---------|---------------|------|--------|
-| 01 | Financial Document Q&A | RAG over tax & financial PDFs, with cited answers | [fin-doc-rag](https://github.com/tcbryan17/fin-doc-rag) | In progress |
-| 02 | Agent Orchestration Console | Supervisor + specialist agents, with full tracing | [agent-orchestration](https://github.com/tcbryan17/agent-orchestration) | Planned |
-| 03 | Open-Source Model Deployment | Self-hosted open-weight LLM, benchmarked | [llm-serving-bench](https://github.com/tcbryan17/llm-serving-bench) | Planned |
+| 01 | Financial Document Q&A | RAG over tax & financial PDFs, with cited answers | `fin-doc-rag` (private for now) | In progress |
+| 02 | Agent Orchestration Console | Supervisor + specialist agents, with full tracing | `agent-orchestration` (private for now) | Planned |
+| 03 | Open-Source Model Deployment | Self-hosted open-weight LLM, benchmarked | `llm-serving-bench` (private for now) | Planned |
 
 ## Architecture
 

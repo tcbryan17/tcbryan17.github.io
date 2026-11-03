@@ -28,7 +28,7 @@ window.PROJECTS = [
     ],
     stack: ["Python", "FastAPI", "pgvector", "Embeddings", "Claude API"],
     pipeline: ["PDFs", "Chunk + embed", "Vector DB", "Retrieve + rerank", "LLM answer + citations"],
-    links: { demo: "", code: "https://github.com/tcbryan17/fin-doc-rag", writeup: "" },
+    links: { demo: "", code: "", writeup: "" }, // repo private for now: https://github.com/tcbryan17/fin-doc-rag
     replay: {
       label: "Sample Q&A",
       events: [
@@ -56,7 +56,7 @@ window.PROJECTS = [
     ],
     stack: ["Python", "Claude Agent SDK", "FastAPI + SSE", "Postgres", "OpenTelemetry"],
     pipeline: ["Task", "Supervisor", "Researcher · Analyst · Writer", "Reviewer", "Result + trace"],
-    links: { demo: "", code: "https://github.com/tcbryan17/agent-orchestration", writeup: "" },
+    links: { demo: "", code: "", writeup: "" }, // repo private for now: https://github.com/tcbryan17/agent-orchestration
     replay: {
       label: "Sample run",
       events: [
@@ -86,7 +86,7 @@ window.PROJECTS = [
     ],
     stack: ["vLLM", "Docker", "Modal / RunPod", "Locust", "Prometheus"],
     pipeline: ["Open-weight model", "Quantize", "vLLM server", "OpenAI-compatible API", "Benchmarks"],
-    links: { demo: "", code: "https://github.com/tcbryan17/llm-serving-bench", writeup: "" },
+    links: { demo: "", code: "", writeup: "" }, // repo private for now: https://github.com/tcbryan17/llm-serving-bench
     benchmarks: {
       note: "Placeholder rows — fill in with your measured results.",
       columns: ["Config", "p50 latency", "Tokens/sec", "$ / 1M tokens"],
