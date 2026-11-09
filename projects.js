@@ -30,7 +30,7 @@ window.PROJECTS = [
     ],
     stack: ["Python", "FastAPI", "Postgres + pgvector", "PyMuPDF", "OpenRouter (zero retention)", "Claude Haiku 5.5", "Qwen3 embeddings + reranker"],
     pipeline: ["10-K HTML + FAA PDF", "Parse + describe figures", "Chunk + embed", "Hybrid search + rerank", "Answer + page citations"],
-    links: { demo: "", code: "", writeup: "" }, // repo private for now: https://github.com/tcbryan17/multimodal-doc-rag
+    links: { demo: "", code: "https://github.com/tcbryan17/multimodal-doc-rag", writeup: "" },
     replay: {
       label: "Sample Q&A (recorded run)",
       // From multimodal-doc-rag: scripts/save_replay.py, then scripts/export_site_replay.py.
