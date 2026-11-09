@@ -123,9 +123,13 @@
     log.replaceChildren();
     for (const e of current.replay.events) {
       timers.push(setTimeout(() => {
+        // An event may carry an image (e.g. the chart or table an answer was read from).
+        const img = e.image
+          ? el("img", { class: "ev-img", src: e.image, alt: e.alt || e.text, loading: "lazy" })
+          : null;
         log.append(el("li", { class: `ev ${e.who}` }, [
           el("span", { class: "who mono", text: e.who }),
-          el("span", { text: e.text }),
+          el("div", { class: "ev-body" }, [el("span", { text: e.text }), img]),
         ]));
         log.scrollTop = log.scrollHeight;
       }, e.t));
