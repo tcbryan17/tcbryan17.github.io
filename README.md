@@ -20,7 +20,7 @@ This repo is the website that brings together three independent applied-AI proje
             └──────┬───────────────┬───────────────┬───────┘
                    │ code + demo   │               │
                    ▼               ▼               ▼
-              fin-doc-rag   agent-orchestration  llm-serving-bench
+         multimodal-doc-rag agent-orchestration llm-serving-bench
               FastAPI API   FastAPI + SSE        vLLM endpoint
               (Render/Fly)  (Render/Fly)         (Modal, scale-to-zero)
 ```
@@ -46,7 +46,7 @@ projects.js    ← edit this to change site content
 
 - **Your info:** edit `PROFILE` at the top of `projects.js`.
 - **When a project goes live:** set `status: "live"` and put the deployed URL in `links.demo`.
-- **When you have a new recorded run:** paste the events from the project repo's `replay/sample-run.json` into `replay.events`.
+- **When you have a new recorded run:** paste the events from the project repo's `replay/sample-run.json` into `replay.events`. For multimodal-doc-rag, `uv run python scripts/export_site_replay.py --site-dir ../portfolio-site` converts the run into events and writes its figures to `assets/replays/`. Events can carry an optional `image` path.
 
 Preview it locally:
 

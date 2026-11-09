@@ -15,30 +15,37 @@ window.PROJECTS = [
   {
     id: "rag",
     number: "01",
-    title: "Financial Document Q&A",
-    subtitle: "Retrieval-augmented generation over tax & financial filings",
+    title: "Multimodal Document Q&A",
+    subtitle: "RAG over SEC 10-Ks and the FAA Pilot's Handbook, including answers that live in charts and tables",
     status: "in-progress",
     problem:
-      "Finance and tax teams spend hours searching dense PDFs (IRS publications, 10-Ks) for one answer. This assistant answers in plain English and cites the exact page it used.",
+      "Long documents hide answers in tables, charts and diagrams that text-only search never sees. This assistant answers plain-English questions over SEC 10-K filings and the 500-page FAA Pilot's Handbook, reads the figure when that's where the answer is, and cites the exact printed page.",
     demonstrates: [
-      "PDF ingestion, chunking & metadata extraction",
-      "Hybrid search (vector + keyword) with reranking",
-      "Grounded answers with page-level citations",
-      "Retrieval evaluation (recall@k, faithfulness)",
+      "Parsing HTML filings and a figure-heavy PDF while keeping printed page labels",
+      "A vision model describes ~500 figures so charts and tables become searchable",
+      "Hybrid search (pgvector + Postgres full-text, fused with RRF) and a reranker",
+      "Grounded answers with validated page citations; figure images go to the model",
+      "Zero-data-retention model routing and hard spending caps",
+      "Eval harness: human-verified questions, held-out split, calibrated LLM judge (results coming)",
     ],
-    stack: ["Python", "FastAPI", "pgvector", "Embeddings", "Claude API"],
-    pipeline: ["PDFs", "Chunk + embed", "Vector DB", "Retrieve + rerank", "LLM answer + citations"],
-    links: { demo: "", code: "", writeup: "" }, // repo private for now: https://github.com/tcbryan17/fin-doc-rag
+    stack: ["Python", "FastAPI", "Postgres + pgvector", "PyMuPDF", "OpenRouter (zero retention)", "Claude Haiku 5.5", "Qwen3 embeddings + reranker"],
+    pipeline: ["10-K HTML + FAA PDF", "Parse + describe figures", "Chunk + embed", "Hybrid search + rerank", "Answer + page citations"],
+    links: { demo: "", code: "", writeup: "" }, // repo private for now: https://github.com/tcbryan17/multimodal-doc-rag
     replay: {
-      label: "Sample Q&A",
+      label: "Sample Q&A (recorded run)",
+      // From multimodal-doc-rag: scripts/save_replay.py, then scripts/export_site_replay.py.
+      // Timings are the real pipeline's; the answer was read from the table images shown.
       events: [
-        { t: 0, who: "user", text: "What is the 2025 standard deduction for a married couple filing jointly?" },
-        { t: 600, who: "retriever", text: "Searched 1,284 chunks → top 3: IRS Pub 501 p.14, p.15; Form 1040 Instructions p.32" },
-        { t: 1200, who: "reranker", text: "Kept 2 passages (score 0.91, 0.84)" },
-        { t: 1900, who: "assistant", text: "Placeholder answer — replace with a real recorded run once the pipeline is built. [Pub 501, p.14]" },
+        { t: 0, who: "user", text: "What is the standard temperature at 5,000 feet?" },
+        { t: 1300, who: "retriever", text: "Hybrid search (vector + keyword, fused with RRF): 30 candidates" },
+        { t: 2381, who: "reranker", text: "Cross-encoder rerank: kept 5 of 30" },
+        { t: 2386, who: "figures", text: "Figure images sent to the model: 2 images" },
+        { t: 5506, who: "assistant", text: "The standard temperature at 5,000 feet is 5.1 °C (41.2 °F) [1][2]." },
+        { t: 5856, who: "source", text: "[1] FAA-H-8083-25C, Ch. 4: Principles of Flight, p. 4-3", image: "assets/replays/rag-1.png" },
+        { t: 6206, who: "source", text: "[2] FAA-H-8083-25C, Ch. 11: Aircraft Performance, p. 11-3", image: "assets/replays/rag-2.png" },
       ],
     },
-    disclaimer: "Public documents only. Not tax or financial advice.",
+    disclaimer: "Public documents only. Not financial, legal, or flight-training advice.",
   },
   {
     id: "agents",
