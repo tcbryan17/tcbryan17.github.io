@@ -26,7 +26,7 @@ window.PROJECTS = [
       "Hybrid search (pgvector + Postgres full-text, fused with RRF) and a reranker",
       "Grounded answers with validated page citations; figure images go to the model",
       "Zero-data-retention model routing and hard spending caps",
-      "Eval harness: human-verified questions, held-out split, calibrated LLM judge (results coming)",
+      "Eval harness: human-verified questions, held-out split, LLM judge to be calibrated against human grades (results coming)",
     ],
     stack: ["Python", "FastAPI", "Postgres + pgvector", "PyMuPDF", "OpenRouter (zero retention)", "Claude Haiku 5.5", "Qwen3 embeddings + reranker"],
     pipeline: ["10-K HTML + FAA PDF", "Parse + describe figures", "Chunk + embed", "Hybrid search + rerank", "Answer + page citations"],
@@ -45,7 +45,7 @@ window.PROJECTS = [
         { t: 6206, who: "source", text: "[2] FAA-H-8083-25C, Ch. 11: Aircraft Performance, p. 11-3", image: "assets/replays/rag-2.png" },
       ],
     },
-    disclaimer: "Public documents only. Not financial, legal, or flight-training advice.",
+    disclaimer: "Answers are AI-generated. Public documents only. Not financial, legal, or flight-training advice.",
   },
   {
     id: "agents",
