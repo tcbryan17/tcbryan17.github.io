@@ -66,18 +66,18 @@
     const open = el("div", { class: "win__pane win__pane--open" }, [
       q && el("p", { class: "msg msg--user", text: q.text }),
       a && el("p", { class: "msg msg--bot" }, [answer + " ", el("span", { class: "cites" }, cites.map((c) => el("sup", { text: c })))]),
-      sources.length && el("div", { class: "sources" }, sources.slice(0, 2).map((s) =>
-        el("div", { class: "source" }, [
-          el("img", { src: s.image, alt: "", width: "640", height: "360" }),
-          el("span", { text: s.text.replace(/^\[\d+\]\s*/, "").replace(/^FAA-H-8083-25C,\s*/, "") }),
+      sources.length && el("div", { class: "run-sources" }, sources.slice(0, 2).map((s) =>
+        el("a", { class: "run-source", href: s.image, target: "_blank", rel: "noopener" }, [
+          el("img", { src: s.image, alt: s.alt || s.text }),
+          el("span", { text: s.text }),
         ])
       )),
     ]);
 
     return el("div", {
-      class: "win",
-      role: "img",
-      "aria-label": `${p.title}, recorded run: ${q ? q.text : ""} Answer: ${a ? a.text : ""}`,
+      class: "win win--run",
+      role: "group",
+      "aria-label": `${p.title}, recorded run`,
     }, [
       el("div", { class: "win__bar", "aria-hidden": "true" }, [
         el("span", { class: "win__dots" }, [el("i"), el("i"), el("i")]),
@@ -85,8 +85,8 @@
         el("span", { class: "sp" }),
         el("span", { class: "mono", text: a ? `Recorded run · answered in ${seconds(a.t)}` : "Recorded run" }),
       ]),
-      el("div", { class: "win__body", "aria-hidden": "true" }, [
-        el("div", { class: "win__pane win__pane--list" }, list),
+      el("div", { class: "win__body" }, [
+        el("div", { class: "win__pane win__pane--list", "aria-hidden": "true" }, list),
         open,
       ]),
     ]);
