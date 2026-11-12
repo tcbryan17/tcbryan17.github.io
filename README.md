@@ -36,11 +36,23 @@ This repo is the website that brings together three independent applied-AI proje
 ## Files
 
 ```
-index.html     page layout
-styles.css     light/dark theme, mobile layout
-app.js         renders the project cards and the replay player
+index.html     page layout (hero, approach section, footer)
+styles.css     the design system: tokens, grid, sections, buttons, motion
+app.js         renders the hero window, project sections, diagrams and the replay player
 projects.js    ← edit this to change site content
+favicon.svg    site icon
+share.jpg      social preview image (a still of the hero)
+.claude/skills/design-taste-frontend/   the taste-skill used for the UI (not published by Pages)
 ```
+
+## Design
+
+The UI follows [taste-skill](https://github.com/Leonxlnx/taste-skill) (`tasteskill 2.5.1`, MIT), installed as a
+project skill in `.claude/skills/design-taste-frontend`, so Claude Code picks it up when working in this repo.
+The deal it was built from is noted in a comment at the top of `<body>` in `index.html`: a centred hero holding the
+RAG project's recorded run, the "Lunar and bronze" dark palette, Gabarito + Figtree type, arrow buttons, and one
+scroll moment (an iris opening over the "Approach" section). Project sections pick their layout from the data:
+a project with `benchmarks` gets the table layout, and neighbouring projects never share a layout.
 
 ## Updating the site
 

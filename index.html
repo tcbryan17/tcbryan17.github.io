@@ -1,81 +1,132 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-type="software" data-radius="soft" data-buttons="arrow" data-motion>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Projects Portfolio</title>
-  <meta name="description" content="Applied AI portfolio: retrieval-augmented generation, agent orchestration, and open-source model deployment.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Toby Bryan: applied AI engineer for retrieval, agents and model serving</title>
+  <meta name="description" content="Three applied AI projects, each with a recorded run you can watch: document Q&amp;A over 10-Ks and the FAA handbook, an agent console and a self-hosted model.">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <meta name="theme-color" content="#111111">
+  <meta property="og:title" content="Toby Bryan, applied AI engineer">
+  <meta property="og:description" content="Retrieval, agents and model serving, each project shipped with a recorded run.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://tcbryan17.github.io/share.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://tcbryan17.github.io/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500&family=Figtree:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 </head>
 <body>
-  <header class="nav">
-    <div class="wrap nav-inner">
+  <!-- Deal (taste-skill 2.5.1, software): hero centred · palette lunar-grey-bronze · type gabarito (Gabarito + Figtree, DM Mono)
+       · nav-centre · footer-columns · close-type · rhythm space · buttons arrow · mark wordmark · moment iris-opens in #approach -->
+  <header class="nav nav--centre">
+    <div class="wrap nav__inner">
+      <a class="skip-link" href="#top">Skip to content</a>
       <a class="brand" href="#top" id="brand"></a>
-      <nav>
-        <a href="#projects">Projects</a>
-        <a href="#how">How it's built</a>
-        <a href="#contact">Contact</a>
+      <nav class="nav__links" id="nav-links" aria-label="Sections">
+        <a href="#rag">Retrieval</a>
+        <a href="#agents">Agents</a>
+        <a href="#serving">Serving</a>
+        <a href="#approach">Approach</a>
       </nav>
+      <div class="nav__end">
+        <a class="btn btn--primary nav__cta" data-email>Email Toby</a>
+        <button class="nav__toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-sheet" aria-label="Open the menu">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav__sheet" id="nav-sheet" hidden>
+      <div class="wrap">
+        <a href="#rag">Retrieval</a>
+        <a href="#agents">Agents</a>
+        <a href="#serving">Serving</a>
+        <a href="#approach">Approach</a>
+        <a class="btn btn--primary" data-email>Email Toby</a>
+      </div>
     </div>
   </header>
 
   <main id="top">
-    <section class="hero wrap">
-      <p class="eyebrow">Applied AI · Portfolio</p>
-      <h1 id="hero-name"></h1>
-      <p class="lede" id="hero-tagline"></p>
-      <div class="hero-actions">
-        <a class="btn primary" href="#projects">See the projects</a>
-        <a class="btn" id="hero-github" target="_blank" rel="noopener">GitHub</a>
-      </div>
-      <ul class="hero-strip" id="hero-strip"></ul>
-    </section>
-
-    <section id="projects" class="wrap">
-      <h2 class="section-title">Projects</h2>
-      <div id="project-list"></div>
-    </section>
-
-    <section id="how" class="wrap">
-      <h2 class="section-title">How it's built</h2>
-      <div class="how-grid">
-        <div class="how-card">
-          <h3>One site, three independent projects</h3>
-          <p>This page is static and hosted on GitHub Pages. Each project lives in its own folder with its own backend, deployed separately, so one can change without breaking the others.</p>
+    <section class="hero hero--centred" data-enter aria-labelledby="hero-h">
+      <div class="wrap hero__inner">
+        <div class="hero__c">
+          <a class="pill" href="#rag" id="hero-pill"></a>
+          <h1 id="hero-h"></h1>
+          <p class="hero__lead" id="hero-tagline"></p>
+          <div class="btn-row">
+            <a class="btn btn--primary" data-email>Email Toby</a>
+            <a class="btn btn--secondary" href="#rag">See the projects</a>
+          </div>
         </div>
-        <div class="how-card">
-          <h3>Replays always work</h3>
-          <p>Every project ships a recorded run, so you can see it work even when a live backend is asleep. Live demos go through a rate-limited proxy, and no API keys ever reach the browser.</p>
-        </div>
-        <div class="how-card">
-          <h3>Measured, not claimed</h3>
-          <p>Each project reports its numbers: retrieval accuracy, agent token cost, and serving latency and cost per token.</p>
-        </div>
+        <div class="hero__window" id="hero-window"></div>
       </div>
     </section>
 
-    <section id="contact" class="wrap contact">
-      <h2 class="section-title">Let's talk</h2>
-      <p>Interested in a system like one of these for your team, or in working together?</p>
-      <div class="hero-actions" id="contact-links"></div>
+    <div id="project-list"></div>
+
+    <section class="section ground-surface mo-io" id="approach" style="--h: 1" aria-labelledby="approach-h">
+      <div class="mo-io__stage" aria-hidden="true"><div class="mo-io__cover"></div><div class="mo-io__ring"></div></div>
+      <div class="wrap grid split">
+        <div class="split__text">
+          <h2 id="approach-h">One static site, three separate repos</h2>
+          <p class="intro">This page is plain HTML on GitHub Pages. Each project keeps its own code, backend and deploy, so one can change without breaking the others.</p>
+          <dl class="rows">
+            <div><dt>Recorded runs always play</dt><dd>Every project ships a replay, so it works even when a live backend is asleep. Live demos go through a rate-limited proxy; no API key reaches the browser.</dd></div>
+            <div><dt>Each project reports numbers</dt><dd>Retrieval accuracy, agent token cost, serving latency and cost per million tokens.</dd></div>
+          </dl>
+        </div>
+        <div class="diagram hub" id="hub">
+          <button class="loop-toggle" type="button" aria-pressed="false" aria-label="Pause the animation"></button>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer class="wrap footer">
-    <span id="footer-name"></span> · <a id="footer-repo" target="_blank" rel="noopener">Source on GitHub</a>
+  <footer class="closing" id="contact">
+    <div class="wrap closing__inner">
+      <div class="close">
+        <h2 id="close-h">Work with me on an AI system</h2>
+        <p>Hiring for applied AI, or want a system like one of these built for your team? Send me an email with what you have in mind.</p>
+        <a class="btn btn--primary btn--xl" data-email>Email Toby</a>
+      </div>
+      <div class="directory">
+        <div class="directory__cols">
+          <a class="brand brand--footer" href="#top" id="footer-brand"></a>
+          <div>
+            <h3>Projects</h3>
+            <ul id="footer-projects"></ul>
+          </div>
+          <div>
+            <h3>Elsewhere</h3>
+            <ul>
+              <li><a id="footer-github" target="_blank" rel="noopener">GitHub</a></li>
+              <li><a id="footer-linkedin" target="_blank" rel="noopener">LinkedIn</a></li>
+              <li><a id="footer-repo" target="_blank" rel="noopener">This site’s source</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="legal"><span id="footer-name"></span> · <span id="year"></span></p>
+      </div>
+    </div>
   </footer>
 
-  <dialog id="replay">
+  <dialog id="replay" aria-labelledby="replay-title">
     <div class="replay-head">
       <strong id="replay-title"></strong>
-      <button class="icon-btn" id="replay-close" aria-label="Close">✕</button>
+      <button class="icon-btn" id="replay-close" aria-label="Close the replay">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
     </div>
     <ol class="replay-log" id="replay-log"></ol>
     <div class="replay-foot">
-      <span class="muted">Recorded run · no backend needed</span>
-      <button class="btn small" id="replay-again">Replay</button>
+      <span class="muted">Recorded run, no backend needed</span>
+      <button class="btn btn--secondary btn--sm" id="replay-again">Play it again</button>
     </div>
   </dialog>
 
