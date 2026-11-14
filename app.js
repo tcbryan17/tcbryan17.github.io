@@ -113,6 +113,7 @@
       row.append(b);
     }
     if (p.links.code) row.append(el("a", { class: "btn btn--secondary", href: p.links.code, target: "_blank", rel: "noopener", text: "Read the code" }));
+    if (p.links.graph) row.append(el("a", { class: "btn btn--secondary", href: p.links.graph, target: "_blank", rel: "noopener", text: "Explore the code graph" }));
     if (p.links.writeup) row.append(el("a", { class: "btn btn--secondary", href: p.links.writeup, target: "_blank", rel: "noopener", text: "Read the write-up" }));
     return row.children.length ? row : null;
   }
