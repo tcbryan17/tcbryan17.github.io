@@ -26,11 +26,11 @@ window.PROJECTS = [
       "Hybrid search (pgvector + Postgres full-text, fused with RRF) and a reranker",
       "Grounded answers with validated page citations; figure images go to the model",
       "Zero-data-retention model routing and hard spending caps",
-      "Eval harness: human-verified questions, held-out split, LLM judge to be calibrated against human grades (results coming)",
+      "Eval harness: 105 reviewed dev questions (reviewed by Claude for this demo; ADR 0020), held-out split, LLM judge to be calibrated against human grades (results coming)",
     ],
     stack: ["Python", "FastAPI", "Postgres + pgvector", "PyMuPDF", "OpenRouter (zero retention)", "Claude Haiku 5.5", "Qwen3 embeddings + reranker"],
     pipeline: ["10-K HTML + FAA PDF", "Parse + describe figures", "Chunk + embed", "Hybrid search + rerank", "Answer + page citations"],
-    links: { demo: "", code: "https://github.com/tcbryan17/multimodal-doc-rag", writeup: "" },
+    links: { demo: "", code: "https://github.com/tcbryan17/multimodal-doc-rag", graph: "assets/code-graph/multimodal-doc-rag.html", writeup: "" },
     replay: {
       label: "Sample Q&A (recorded run)",
       // From multimodal-doc-rag: scripts/save_replay.py, then scripts/export_site_replay.py.
