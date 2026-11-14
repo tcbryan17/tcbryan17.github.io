@@ -150,12 +150,14 @@
     const id = `${p.id}-h`;
     const head = el("div", { class: "section-head" }, [
       el("div", { class: "section-head__title" }, [label(p), el("h2", { id, text: p.title }), el("p", { class: "sub", text: p.subtitle })]),
-      el("div", { class: "section-head__body" }, [el("p", { text: p.problem }), actions(p)]),
+      el("div", { class: "section-head__body" }, [el("p", { text: p.problem }), actions(p), askNote(p)]),
     ]);
+    const ask = askPanel(p);
 
     if (layout === "wide") {
       return el("section", { class: "section project", id: p.id, style: "--h: 1", "aria-labelledby": id }, el("div", { class: "wrap" }, [
         head,
+        ask,
         pipeline(p),
         el("ul", { class: "points project__row", "aria-label": "What it demonstrates" }, p.demonstrates.map((d) => el("li", { text: d }))),
         foot(p),
@@ -166,6 +168,7 @@
       const b = p.benchmarks;
       return el("section", { class: "section project", id: p.id, style: "--h: 1", "aria-labelledby": id }, el("div", { class: "wrap" }, [
         head,
+        ask,
         pipeline(p),
         el("div", { class: "grid project__row", style: "row-gap: 48px" }, [
           el("ul", { class: "points points--2", style: "grid-column: span 5", "aria-label": "What it demonstrates" }, p.demonstrates.map((d) => el("li", { text: d }))),
@@ -190,7 +193,7 @@
       el("ul", { class: "tags", "aria-label": "Stack" }, p.stack.map((s) => el("li", { text: s }))),
       actions(p),
     ]);
-    const visual = el("div", { class: "split__visual" }, p.replay ? traceWindow(p) : pipeline(p));
+    const visual = el("div", { class: "split__visual" }, [p.replay ? traceWindow(p) : pipeline(p), askPanel(p)]);
     return el("section", { class: "section project", id: p.id, style: "--h: 1", "aria-labelledby": id },
       el("div", { class: "wrap grid split" }, [text, visual]));
   }
@@ -232,6 +235,237 @@
       win.addEventListener("pointerenter", play);
     }
     return win;
+  }
+
+
+  // ---------- Live Q&A ("ask your own question") ----------
+  // Security (controls R11/C30): everything that comes back from the API is untrusted. It is only ever
+  // written with textContent / el({text}) or attribute values on DOM nodes we create. Never innerHTML.
+  // MUST match the server's question length cap (the API rejects longer input with a 422).
+  const ASK_MAX_CHARS = 500;
+  const ASK_TIMEOUT_MS = 30000;   // give up after this long
+  const ASK_COLD_HINT_MS = 4000;  // free hosts sleep; say so if the answer is slow
+  const LOCAL_HOST = /^(localhost|127\.0\.0\.1|\[::1\])$/;
+  const LOCAL_ORIGIN = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+  const CORPORA = [["", "All documents"], ["10k", "10-Ks"], ["faa", "FAA handbook"]];
+
+  // The API base: links.api (https only). On localhost only, ?api=http://localhost:8787 overrides it for
+  // development (see dev/mock-api.py). On the live site the override is ignored, so nobody can aim the page elsewhere.
+  function apiBase(p) {
+    let b = ((p.links && p.links.api) || "").trim();
+    if (LOCAL_HOST.test(location.hostname)) {
+      const o = new URLSearchParams(location.search).get("api");
+      if (o && LOCAL_ORIGIN.test(o.replace(/\/+$/, ""))) b = o;
+    }
+    b = b.replace(/\/+$/, "");
+    return /^https:\/\//.test(b) || LOCAL_ORIGIN.test(b) ? b : "";
+  }
+
+  // No API yet: be honest, and keep the recorded run as the way in.
+  function askNote(p) {
+    if (!p.ask || !p.links || p.links.api == null || apiBase(p)) return null;
+    return el("p", { class: "note ask-note", text: "Live Q&A opens once the evaluation passes its release check. Meanwhile, watch a recorded run." });
+  }
+
+  function askPanel(p) {
+    const base = p.ask && apiBase(p);
+    if (!base) return null;
+    const uid = `${p.id}-ask`;
+
+    const input = el("textarea", { id: `${uid}-q`, class: "field", rows: "3", maxlength: String(ASK_MAX_CHARS), required: "", "aria-describedby": `${uid}-hint ${uid}-count`, placeholder: "e.g. What is the standard temperature at 5,000 feet?" });
+    const count = el("span", { id: `${uid}-count`, class: "ask__count mono", text: `0 / ${ASK_MAX_CHARS}` });
+    const select = el("select", { id: `${uid}-corpus`, class: "field field--select" }, CORPORA.map(([v, t]) => el("option", { value: v, text: t })));
+    const submit = el("button", { class: "btn btn--primary", type: "submit", text: "Ask" });
+    const status = el("p", { class: "ask__status", id: `${uid}-status`, role: "status", "aria-live": "polite" });
+    const fallback = el("div", { class: "ask__fallback" });
+    const result = el("div", { class: "ask__result", id: `${uid}-result`, tabindex: "-1", hidden: "" });
+
+    const form = el("form", { class: "ask__form", novalidate: "" }, [
+      el("label", { class: "ask__label", for: input.id, text: "Your question" }),
+      input,
+      el("div", { class: "ask__meta" }, [el("span", { id: `${uid}-hint`, class: "note", text: `Up to ${ASK_MAX_CHARS} characters.` }), count]),
+      el("div", { class: "ask__row" }, [
+        el("div", { class: "ask__corpus" }, [el("label", { class: "ask__label", for: select.id, text: "Search in" }), select]),
+        submit,
+      ]),
+    ]);
+
+    const examples = p.ask.examples && p.ask.examples.length
+      ? el("div", { class: "ask__examples" }, [
+          el("p", { class: "ask__label", id: `${uid}-ex`, text: "Or try one" }),
+          el("ul", { class: "ask__chips", "aria-labelledby": `${uid}-ex` }, p.ask.examples.map((ex) => {
+            const b = el("button", { class: "btn btn--secondary btn--sm", type: "button", text: ex.q });
+            b.addEventListener("click", () => {
+              if (busy) return;
+              input.value = ex.q;
+              select.value = CORPORA.some(([v]) => v === ex.corpus) ? ex.corpus : "";
+              onInput();
+              form.requestSubmit();
+            });
+            return el("li", {}, b);
+          })),
+        ])
+      : null;
+
+    const panel = el("div", { class: "win win--ask ask", role: "group", "aria-labelledby": `${uid}-t` }, [
+      el("div", { class: "win__bar" }, [
+        el("span", { class: "win__dots", "aria-hidden": "true" }, [el("i"), el("i"), el("i")]),
+        el("b", { id: `${uid}-t`, text: "Ask your own question" }),
+        el("span", { class: "sp" }),
+        el("span", { class: "mono", text: "Live" }),
+      ]),
+      el("div", { class: "ask__body" }, [
+        form,
+        examples,
+        // EU AI Act Art. 50 transparency notice (control C15), next to the input and repeated with every answer.
+        el("p", { class: "note ask__notice", text: "Answers are generated by AI and can be wrong. Check the cited pages." }),
+        p.disclaimer ? el("p", { class: "note", text: p.disclaimer }) : null,
+        status,
+        fallback,
+        result,
+      ]),
+    ]);
+
+    let busy = false;
+    const onInput = () => {
+      const n = input.value.length;
+      count.textContent = `${n} / ${ASK_MAX_CHARS}`;
+      count.classList.toggle("is-near", n >= ASK_MAX_CHARS * 0.9);
+    };
+    input.addEventListener("input", onInput);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); form.requestSubmit(); }
+    });
+
+    const say = (msg) => { status.textContent = ""; status.textContent = msg; };
+    const offerReplay = () => {
+      const b = el("button", { class: "btn btn--secondary btn--sm", type: "button", "data-replay": "", text: "Watch the recorded run" });
+      b.addEventListener("click", () => openReplay(p));
+      fallback.replaceChildren(b);
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (busy) return;
+      const question = input.value.trim();
+      if (!question) { say("Type a question first."); input.focus(); return; }
+      if (question.length > ASK_MAX_CHARS) { say(`That is over the ${ASK_MAX_CHARS}-character limit. Please shorten it.`); input.focus(); return; }
+
+      busy = true;
+      submit.setAttribute("aria-disabled", "true");
+      panel.setAttribute("aria-busy", "true");
+      fallback.replaceChildren();
+      result.hidden = true;
+      result.replaceChildren();
+      say("Searching the documents and writing an answer…");
+      const cold = setTimeout(() => say("Still working. The free server may be waking up, which can take up to 30 seconds."), ASK_COLD_HINT_MS);
+      const ctrl = new AbortController();
+      const timeout = setTimeout(() => ctrl.abort(), ASK_TIMEOUT_MS);
+
+      try {
+        const body = { question };
+        if (select.value) body.corpus = select.value;
+        let res;
+        try {
+          res = await fetch(`${base}/ask`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: ctrl.signal, credentials: "omit" });
+        } catch (err) {
+          say(ctrl.signal.aborted ? "That took too long. The server may be asleep." : "Could not reach the server. It may be asleep or offline.");
+          offerReplay();
+          return;
+        }
+        if (res.status === 422) { say(`The question was not accepted. Keep it to a single question under ${ASK_MAX_CHARS} characters.`); input.focus(); return; }
+        if (res.status === 429) {
+          const secs = parseInt(res.headers.get("Retry-After") || "", 10);
+          say(secs > 0 ? `Too many questions. Please wait ${secs} second${secs === 1 ? "" : "s"} and try again.` : "Too many questions. Please wait a little and try again.");
+          return;
+        }
+        if (res.status === 503) { say("Today's demo budget has been used up. It resets daily. Meanwhile, you can watch a recorded run."); offerReplay(); return; }
+        if (!res.ok) { say("The server had a problem. It may be asleep or down."); offerReplay(); return; }
+
+        let data;
+        try { data = await res.json(); } catch (err) { data = null; }
+        if (!data || typeof data.answer !== "string") { say("The server sent a reply this page could not read."); offerReplay(); return; }
+
+        renderAnswer(result, data, base, p);
+        result.hidden = false;
+        say("Answer ready.");
+        result.focus();
+      } finally {
+        clearTimeout(cold);
+        clearTimeout(timeout);
+        busy = false;
+        submit.removeAttribute("aria-disabled");
+        panel.removeAttribute("aria-busy");
+      }
+    });
+    // aria-disabled keeps focus on the button; make a click while busy do nothing
+    submit.addEventListener("click", (e) => { if (busy) e.preventDefault(); });
+
+    return panel;
+  }
+
+  // Build the answer, its citations and the trace from an API reply, with text nodes only.
+  function renderAnswer(box, data, base, p) {
+    const cites = Array.isArray(data.citations) ? data.citations.filter((c) => c && typeof c === "object") : [];
+    const trace = Array.isArray(data.trace) ? data.trace.filter((t) => t && typeof t === "object") : [];
+    const rid = `${p.id}-cite`;
+    const items = cites.map((c, i) => {
+      const page = c.page != null && String(c.page) ? `p. ${c.page}${c.page_end != null && String(c.page_end) && String(c.page_end) !== String(c.page) ? `–${c.page_end}` : ""}` : "";
+      const head = [c.doc != null ? String(c.doc) : "", page].filter(Boolean).join(", ");
+      // Only a path on the API itself is accepted as an image: it must start with a single "/".
+      const path = typeof c.image_url === "string" && /^\/(?!\/)/.test(c.image_url) ? c.image_url : "";
+      let fig = null;
+      if (path) {
+        const src = base + path;
+        const img = el("img", { class: "ask__img", src, alt: `Figure from ${head || `source ${i + 1}`}`, loading: "lazy" });
+        img.addEventListener("error", () => img.replaceWith(el("span", { class: "note", text: "The figure could not be loaded." })));
+        fig = el("a", { class: "ask__fig", href: src, target: "_blank", rel: "noopener" }, img);
+      }
+      return el("li", { class: "ask__cite", id: `${rid}-${i + 1}`, tabindex: "-1" }, [
+        el("span", { class: "who", text: `[${i + 1}]` }),
+        el("div", { class: "ev-body" }, [
+          el("span", { class: "ask__src", text: head || "Source" }),
+          c.snippet != null ? el("p", { class: "ask__snip", text: String(c.snippet) }) : null,
+          fig,
+        ]),
+      ]);
+    });
+
+    const hit = (k) => {
+      const target = items[k - 1];
+      if (!target) return;
+      items.forEach((li) => li.classList.toggle("is-hit", li === target));
+      target.scrollIntoView({ block: "nearest", behavior: reduced ? "auto" : "smooth" });
+      target.focus({ preventScroll: true });
+    };
+
+    // Split the answer on [k] markers. Valid markers become buttons; anything else stays plain text.
+    const nodes = [];
+    let last = 0;
+    data.answer.replace(/\[(\d{1,3})\]/g, (m, num, at) => {
+      const k = Number(num);
+      if (k < 1 || k > items.length) return m;
+      if (at > last) nodes.push(data.answer.slice(last, at));
+      const b = el("button", { class: "cite-btn", type: "button", text: `[${k}]`, "aria-label": `Show source ${k}` });
+      b.addEventListener("click", () => hit(k));
+      nodes.push(b);
+      last = at + m.length;
+      return m;
+    });
+    if (last < data.answer.length) nodes.push(data.answer.slice(last));
+
+    box.replaceChildren(
+      el("h3", { class: "ask__h", text: "Answer" }),
+      el("p", { class: "msg msg--bot ask__answer" }, nodes.length ? nodes : "No answer was returned."),
+      el("p", { class: "note", text: "Generated by AI. Verify against the cited pages." }),
+      items.length ? el("h3", { class: "ask__h", text: "Sources" }) : null,
+      items.length ? el("ol", { class: "ask__cites", "aria-label": "Sources" }, items) : null,
+      trace.length ? el("h3", { class: "ask__h", text: "How it was answered" }) : null,
+      trace.length ? el("ol", { class: "trace", "aria-label": "Steps" }, trace.map((t) => el("li", {}, [
+        el("span", { class: "who", text: String(t.step != null ? t.step : "") }),
+        el("span", {}, [String(t.detail != null ? t.detail : ""), Number.isFinite(t.ms) ? el("span", { class: "when", text: `${Math.round(t.ms)} ms` }) : null]),
+      ]))) : null,
+    );
   }
 
   function loopToggle() {

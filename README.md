@@ -59,9 +59,20 @@ a project with `benchmarks` gets the table layout, and neighbouring projects nev
 ## Updating the site
 
 - **Your info:** edit `PROFILE` at the top of `projects.js`.
+- **When the RAG API is deployed:** set `links.api` in `projects.js` to its base URL (`https://…`, no trailing slash). The card then swaps the "opens once the evaluation passes" note for the ask box (the recorded run stays). The API's CORS setting must allow the origin `https://tcbryan17.github.io` (methods `POST, OPTIONS`, header `Content-Type`) and expose the `Retry-After` header so the 429 message can show the wait time. The 500-character question cap in `app.js` (`ASK_MAX_CHARS`) must match the server's.
 - **When a project goes live:** set `status: "live"` and put the deployed URL in `links.demo`.
 - **Code graph:** copy a project's `docs/code-graph/graph.html` to `assets/code-graph/<repo>.html` and set `links.graph`. The card then shows an "Explore the code graph" button.
 - **When you have a new recorded run:** paste the events from the project repo's `replay/sample-run.json` into `replay.events`. For multimodal-doc-rag, `uv run python scripts/export_site_replay.py --site-dir ../portfolio-site` converts the run into events and writes its figures to `assets/replays/`. Events can carry an optional `image` path.
+
+Try the ask box before the API exists (development only, nothing here ships):
+
+```bash
+python3 dev/mock-api.py          # fake API on http://localhost:8787
+python3 -m http.server 8000      # in a second terminal
+# open http://localhost:8000/?api=http://localhost:8787
+```
+
+The `?api=` override is honoured only when the page itself is on `localhost`/`127.0.0.1` and points at a localhost origin, so a visitor to the live site cannot aim it at another server. Type `429`, `503`, `500`, `422`, `slow`, `hang`, `badjson` or `xss` in a question to see each state (see the header of `dev/mock-api.py`). `dev/` is excluded from Pages by `_config.yml`.
 
 Preview it locally:
 

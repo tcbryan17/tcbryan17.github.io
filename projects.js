@@ -30,7 +30,7 @@ window.PROJECTS = [
     ],
     stack: ["Python", "FastAPI", "Postgres + pgvector", "PyMuPDF", "OpenRouter (zero retention)", "Claude Haiku 5.5", "Qwen3 embeddings + reranker"],
     pipeline: ["10-K HTML + FAA PDF", "Parse + describe figures", "Chunk + embed", "Hybrid search + rerank", "Answer + page citations"],
-    links: { demo: "", code: "https://github.com/tcbryan17/multimodal-doc-rag", graph: "assets/code-graph/multimodal-doc-rag.html", writeup: "" },
+    links: { demo: "", api: "", code: "https://github.com/tcbryan17/multimodal-doc-rag", graph: "assets/code-graph/multimodal-doc-rag.html", writeup: "" },
     replay: {
       label: "Sample Q&A (recorded run)",
       // From multimodal-doc-rag: scripts/save_replay.py, then scripts/export_site_replay.py.
@@ -43,6 +43,15 @@ window.PROJECTS = [
         { t: 5506, who: "assistant", text: "The standard temperature at 5,000 feet is 5.1 °C (41.2 °F) [1][2]." },
         { t: 5856, who: "source", text: "[1] FAA-H-8083-25C, Ch. 4: Principles of Flight, p. 4-3", image: "assets/replays/rag-1.png" },
         { t: 6206, who: "source", text: "[2] FAA-H-8083-25C, Ch. 11: Aircraft Performance, p. 11-3", image: "assets/replays/rag-2.png" },
+      ],
+    },
+    // Live Q&A. Empty links.api = the card shows an honest "opens later" note and no input.
+    // Set links.api to the deployed API base URL (https, no trailing slash) to switch the ask UI on.
+    ask: {
+      examples: [
+        { q: "What is the standard temperature at 5,000 feet?", corpus: "faa" },
+        { q: "How does a stall differ from a spin?", corpus: "faa" },
+        { q: "What risk factors does the company describe in its 10-K?", corpus: "10k" },
       ],
     },
     disclaimer: "Answers are AI-generated. Public documents only. Not financial, legal, or flight-training advice.",
