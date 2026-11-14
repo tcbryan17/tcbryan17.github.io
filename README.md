@@ -6,7 +6,7 @@ This repo is the website that brings together three independent applied-AI proje
 
 | # | Project | What it shows | Repo | Status |
 |---|---------|---------------|------|--------|
-| 01 | Financial Document Q&A | RAG over tax & financial PDFs, with cited answers | `fin-doc-rag` (private for now) | In progress |
+| 01 | Multimodal Document Q&A | RAG over SEC 10-Ks and the FAA Pilot's Handbook, including answers found only in figures, with page citations | [`multimodal-doc-rag`](https://github.com/tcbryan17/multimodal-doc-rag) | In progress: recorded run on the site, eval underway, live Q&A after deployment |
 | 02 | Agent Orchestration Console | Supervisor + specialist agents, with full tracing | `agent-orchestration` (private for now) | Planned |
 | 03 | Open-Source Model Deployment | Self-hosted open-weight LLM, benchmarked | `llm-serving-bench` (private for now) | Planned |
 
@@ -39,6 +39,8 @@ This repo is the website that brings together three independent applied-AI proje
 index.html     page layout (hero, approach section, footer)
 styles.css     the design system: tokens, grid, sections, buttons, motion
 app.js         renders the hero window, project sections, diagrams and the replay player
+assets/replays/      figure images shown in recorded runs
+assets/code-graph/   interactive code graphs (graphify), linked from project cards
 projects.js    ← edit this to change site content
 favicon.svg    site icon
 share.jpg      social preview image (a still of the hero)
@@ -58,6 +60,7 @@ a project with `benchmarks` gets the table layout, and neighbouring projects nev
 
 - **Your info:** edit `PROFILE` at the top of `projects.js`.
 - **When a project goes live:** set `status: "live"` and put the deployed URL in `links.demo`.
+- **Code graph:** copy a project's `docs/code-graph/graph.html` to `assets/code-graph/<repo>.html` and set `links.graph`. The card then shows an "Explore the code graph" button.
 - **When you have a new recorded run:** paste the events from the project repo's `replay/sample-run.json` into `replay.events`. For multimodal-doc-rag, `uv run python scripts/export_site_replay.py --site-dir ../portfolio-site` converts the run into events and writes its figures to `assets/replays/`. Events can carry an optional `image` path.
 
 Preview it locally:
@@ -75,7 +78,8 @@ python3 -m http.server 8000
 
 ## Roadmap
 
-- [ ] **01 RAG:** ingest public IRS publications and 10-Ks, build hybrid retrieval, write a 50-question eval set, deploy, record a replay
+- [x] **01 RAG:** ingest 10-Ks and the FAA handbook, hybrid retrieval and reranking, recorded replay, reviewed dev eval set, code graph
+- [ ] **01 RAG:** eval baseline and judge calibration, held-out release check, then deploy a rate-limited live `/ask` so visitors can ask their own questions
 - [ ] **02 Agents:** supervisor and 4 workers, SSE event stream, timeline UI, cost and token tracing
 - [ ] **03 Serving:** vLLM on Modal, FP16 vs. 4-bit, Locust load test, fill in the benchmark table
 - [ ] Write a short post for each project
