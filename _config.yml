@@ -1,0 +1,6 @@
+# GitHub Pages builds this repo with Jekyll. Keep development files off the published site.
+# (Adding a .nojekyll file would turn this exclude list off.)
+exclude:
+  - dev
+  - README.md
+  - .claude
