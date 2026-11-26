@@ -92,6 +92,15 @@
     ]);
   }
 
+  // Live Q&A constants. Declared before the project sections render, because rendering calls askPanel().
+  // MUST match the server's question length cap (the API rejects longer input with a 422).
+  const ASK_MAX_CHARS = 500;
+  const ASK_TIMEOUT_MS = 30000;   // give up after this long
+  const ASK_COLD_HINT_MS = 4000;  // free hosts sleep; say so if the answer is slow
+  const LOCAL_HOST = /^(localhost|127\.0\.0\.1|\[::1\])$/;
+  const LOCAL_ORIGIN = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+  const CORPORA = [["", "All documents"], ["10k", "10-Ks"], ["faa", "FAA handbook"]];
+
   // ---------- Project sections: neighbours never share a layout ----------
   const list = document.getElementById("project-list");
   let prev = "";
@@ -241,13 +250,7 @@
   // ---------- Live Q&A ("ask your own question") ----------
   // Security (controls R11/C30): everything that comes back from the API is untrusted. It is only ever
   // written with textContent / el({text}) or attribute values on DOM nodes we create. Never innerHTML.
-  // MUST match the server's question length cap (the API rejects longer input with a 422).
-  const ASK_MAX_CHARS = 500;
-  const ASK_TIMEOUT_MS = 30000;   // give up after this long
-  const ASK_COLD_HINT_MS = 4000;  // free hosts sleep; say so if the answer is slow
-  const LOCAL_HOST = /^(localhost|127\.0\.0\.1|\[::1\])$/;
-  const LOCAL_ORIGIN = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-  const CORPORA = [["", "All documents"], ["10k", "10-Ks"], ["faa", "FAA handbook"]];
+  // (ask constants live above the project sections, which call askPanel() while rendering)
 
   // The API base: links.api (https only). On localhost only, ?api=http://localhost:8787 overrides it for
   // development (see dev/mock-api.py). On the live site the override is ignored, so nobody can aim the page elsewhere.
