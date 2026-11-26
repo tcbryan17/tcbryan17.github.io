@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Toby Bryan: applied AI engineer for retrieval, agents and model serving</title>
-  <meta name="description" content="Three applied AI projects, each with a recorded run you can watch: document Q&amp;A over 10-Ks and the FAA handbook, an agent console and a self-hosted model.">
+  <title>Toby Bryan: applied AI engineer for retrieval, agents and LLM gateways</title>
+  <meta name="description" content="Three applied AI projects: document Q&amp;A over 10-Ks and the FAA handbook, an agent console and an LLM gateway in front of both.">
   <meta name="page-type" content="software">
   <meta name="site-kind" content="software">
   <meta name="theme-color" content="#111111">
   <meta property="og:title" content="Toby Bryan, applied AI engineer">
-  <meta property="og:description" content="Retrieval, agents and model serving, each project shipped with a recorded run.">
+  <meta property="og:description" content="Retrieval, agents and an LLM gateway, built with evals and governance.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://tcbryan17.github.io/share.jpg">
   <meta name="twitter:card" content="summary_large_image">
@@ -31,7 +31,7 @@
       <nav class="nav__links" id="nav-links" aria-label="Sections">
         <a href="#rag">Retrieval</a>
         <a href="#agents">Agents</a>
-        <a href="#serving">Serving</a>
+        <a href="#gateway">Gateway</a>
         <a href="#approach">Approach</a>
       </nav>
       <div class="nav__end">
@@ -45,7 +45,7 @@
       <div class="wrap">
         <a href="#rag">Retrieval</a>
         <a href="#agents">Agents</a>
-        <a href="#serving">Serving</a>
+        <a href="#gateway">Gateway</a>
         <a href="#approach">Approach</a>
         <a class="btn btn--primary" data-email>Email Toby</a>
       </div>
@@ -77,8 +77,8 @@
           <h2 id="approach-h">One static site, three separate repos</h2>
           <p class="intro">This page is plain HTML on GitHub Pages. Each project keeps its own code, backend and deploy, so one can change without breaking the others.</p>
           <dl class="rows">
-            <div><dt>Recorded runs always play</dt><dd>Every project ships a replay, so it works even when a live backend is asleep. Live demos go through a rate-limited proxy; no API key reaches the browser.</dd></div>
-            <div><dt>Each project reports numbers</dt><dd>Retrieval accuracy, agent token cost, serving latency and cost per million tokens.</dd></div>
+            <div><dt>Recorded runs always play</dt><dd>Projects with a recorded run ship a replay, so it works even when a live backend is asleep. Live demos go through a rate-limited proxy; no API key reaches the browser.</dd></div>
+            <div><dt>Each project reports numbers</dt><dd>Retrieval accuracy, agent token cost, gateway cost, latency and guard hit rates.</dd></div>
           </dl>
         </div>
         <div class="diagram hub" id="hub">
