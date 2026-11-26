@@ -27,7 +27,7 @@ This repo is the website that brings together three independent applied-AI proje
 
 **Design rules**
 
-1. **The site is static.** Plain HTML, CSS and JS with no build step. GitHub Pages serves it from the repo root.
+1. **The site is static.** Plain HTML, CSS and JS with no build step. GitHub Pages serves it (see CI/CD below).
 2. **Projects are independent.** Each repo has its own code, dependencies, CI and deployment. The site only links to them and calls their public APIs.
 3. **Replays always work.** Each project repo with a recorded run saves it at `replay/sample-run.json`. Copy its events into that project's `replay.events` in `projects.js`. The live demo is a bonus on top of that.
 4. **No secrets in the browser.** Live demos call a rate-limited backend proxy that holds the API key.
@@ -72,7 +72,7 @@ python3 -m http.server 8000      # in a second terminal
 # open http://localhost:8000/?api=http://localhost:8787
 ```
 
-The `?api=` override is honoured only when the page itself is on `localhost`/`127.0.0.1` and points at a localhost origin, so a visitor to the live site cannot aim it at another server. Type `429`, `503`, `500`, `422`, `slow`, `hang`, `badjson` or `xss` in a question to see each state (see the header of `dev/mock-api.py`). `dev/` is excluded from Pages by `_config.yml`.
+The `?api=` override is honoured only when the page itself is on `localhost`/`127.0.0.1` and points at a localhost origin, so a visitor to the live site cannot aim it at another server. Type `429`, `503`, `500`, `422`, `slow`, `hang`, `badjson` or `xss` in a question to see each state (see the header of `dev/mock-api.py`). `dev/` is kept off the site by the allowlist in `deploy.yml` (and by `_config.yml` while the old branch deploy runs).
 
 Preview it locally:
 
@@ -83,9 +83,31 @@ python3 -m http.server 8000
 ## Publishing on GitHub Pages
 
 1. Create a GitHub repo named exactly `tcbryan17.github.io` and push this folder to it.
-2. Go to **Settings → Pages**, choose *Deploy from a branch*, then `main` and `/ (root)`.
+2. Go to **Settings → Pages → Build and deployment** and set **Source** to *GitHub Actions* (see CI/CD below).
 3. The site is served at `https://tcbryan17.github.io`.
 4. Pin this repo and the three project repos on your GitHub profile.
+
+## CI/CD
+
+`.github/workflows/ci.yml` runs on every pull request, and `deploy.yml` runs it again before each publish. It runs two checks:
+
+- `npm run check` is fast and static. It checks the syntax of `app.js` and `projects.js`, the shape of `PROFILE` and `PROJECTS`, that every `#anchor` in `index.html` has a target, and that every local file it references exists.
+- `npm run smoke` loads the page in Chromium at desktop width. It fails on any page error or console error, and on a missing project section. Then it resizes to phone width and fails on horizontal scroll.
+
+Run them locally:
+
+```bash
+npm ci
+npx playwright install chromium
+npm run check
+npm run smoke
+```
+
+`.github/workflows/deploy.yml` publishes the site on every merge to `main`, after the same checks pass. It copies only an allowlist of files (`index.html`, `styles.css`, `app.js`, `projects.js`, `favicon.svg`, `share.jpg`, `assets/`) into the published artifact, so `dev/`, `tests/`, this README and `.claude` stay off the site.
+
+One-time setup: go to **Settings → Pages → Build and deployment → Source** and choose *GitHub Actions*. Until you do, the old branch deploy keeps running. If you add a new top-level file the site needs, add it to the allowlist in `deploy.yml`.
+
+Suggested: add a ruleset on `main` that requires the `CI / checks` status check and a pull request. Dependabot opens weekly updates for the actions and the npm dev dependency.
 
 ## Roadmap
 

@@ -1,5 +1,6 @@
-# GitHub Pages builds this repo with Jekyll. Keep development files off the published site.
-# (Adding a .nojekyll file would turn this exclude list off.)
+# This only applies to the old "Deploy from a branch" build, which uses Jekyll.
+# The GitHub Actions deploy (.github/workflows/deploy.yml) ignores it and publishes an allowlist instead.
+# Keep development files off the published site.
 exclude:
   - dev
   - README.md
