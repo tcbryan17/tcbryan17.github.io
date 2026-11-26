@@ -8,7 +8,7 @@ This repo is the website that brings together three independent applied-AI proje
 |---|---------|---------------|------|--------|
 | 01 | Multimodal Document Q&A | RAG over SEC 10-Ks and the FAA Pilot's Handbook, including answers found only in figures, with page citations | [`multimodal-doc-rag`](https://github.com/tcbryan17/multimodal-doc-rag) | In progress: recorded run on the site, eval underway, live Q&A after deployment |
 | 02 | Agent Orchestration Console | Supervisor + specialist agents, with full tracing | `agent-orchestration` (private for now) | Planned |
-| 03 | Open-Source Model Deployment | Self-hosted open-weight LLM, benchmarked | `llm-serving-bench` (private for now) | Planned |
+| 03 | LLM Gateway | One governed API in front of the other two: limits, PII redaction, injection guards, routing, audit trail | `llm-gateway` (private for now) | In progress: Phase 0 scaffold and concept stubs |
 
 ## Architecture
 
@@ -20,18 +20,18 @@ This repo is the website that brings together three independent applied-AI proje
             └──────┬───────────────┬───────────────┬───────┘
                    │ code + demo   │               │
                    ▼               ▼               ▼
-         multimodal-doc-rag agent-orchestration llm-serving-bench
-              FastAPI API   FastAPI + SSE        vLLM endpoint
-              (Render/Fly)  (Render/Fly)         (Modal, scale-to-zero)
+         multimodal-doc-rag agent-orchestration llm-gateway
+              FastAPI API   FastAPI + SSE        FastAPI gateway
+              (Render/Fly)  (Render/Fly)         (hosting TBD)
 ```
 
 **Design rules**
 
 1. **The site is static.** Plain HTML, CSS and JS with no build step. GitHub Pages serves it from the repo root.
 2. **Projects are independent.** Each repo has its own code, dependencies, CI and deployment. The site only links to them and calls their public APIs.
-3. **Replays always work.** Each project repo saves a recorded run at `replay/sample-run.json`. Copy its events into that project's `replay.events` in `projects.js`. The live demo is a bonus on top of that.
+3. **Replays always work.** Each project repo with a recorded run saves it at `replay/sample-run.json`. Copy its events into that project's `replay.events` in `projects.js`. The live demo is a bonus on top of that.
 4. **No secrets in the browser.** Live demos call a rate-limited backend proxy that holds the API key.
-5. **Measure everything.** Each project reports numbers: retrieval accuracy, agent cost, serving latency and $/token.
+5. **Measure everything.** Each project reports numbers: retrieval accuracy, agent cost, gateway cost and latency.
 
 ## Files
 
@@ -92,5 +92,5 @@ python3 -m http.server 8000
 - [x] **01 RAG:** ingest 10-Ks and the FAA handbook, hybrid retrieval and reranking, recorded replay, reviewed dev eval set, code graph
 - [ ] **01 RAG:** eval baseline and judge calibration, held-out release check, then deploy a rate-limited live `/ask` so visitors can ask their own questions
 - [ ] **02 Agents:** supervisor and 4 workers, SSE event stream, timeline UI, cost and token tracing
-- [ ] **03 Serving:** vLLM on Modal, FP16 vs. 4-bit, Locust load test, fill in the benchmark table
+- [ ] **03 Gateway:** hand-write K1 to K8 (routing, limits, accounting, redaction, guards, audit, evals), then route projects 01 and 02 through it
 - [ ] Write a short post for each project
