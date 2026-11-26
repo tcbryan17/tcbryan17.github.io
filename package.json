@@ -1,0 +1,12 @@
+{
+  "name": "portfolio-site",
+  "private": true,
+  "description": "Static portfolio site. No build step. These dev dependencies only run the tests.",
+  "scripts": {
+    "check": "node tests/check.mjs",
+    "smoke": "node tests/smoke.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}
